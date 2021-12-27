@@ -2,7 +2,7 @@ import os
 from sqlalchemy import create_engine, Integer, String, ForeignKey, Column
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, session,sessionmaker, Session
-from sqlalchemy.sql.expression import true
+from sqlalchemy.sql.expression import select, text, true
 from sqlalchemy.sql.sqltypes import BigInteger
 
 
@@ -244,6 +244,40 @@ def create_comment_and_star(comment_id, comment_text, star_num, customer_id, pro
 
     Session.commit()
 
+
+def select_customer(customer_username):
+    
+    customer = Session.query(Customer) \
+        .filter(Customer.username == customer_username) \
+        .first()
+ 
+    return customer
+
+def select_basket(basket_id):
+    
+    basket = Session.query(Basket) \
+        .filter(Basket.basket_id == basket_id) \
+        .first()
+ 
+    return basket
+
+
+def select_text_comment(comment_id):
+    
+    text_comment = Session.query(Comment) \
+        .filter(Comment.comment_id == comment_id) \
+        .first()
+ 
+    return text_comment
+
+
+def select_star_comment(comment_id):
+    
+    star_comment = Session.query(Star) \
+        .filter(Star.comment_id == comment_id) \
+        .first()
+ 
+    return star_comment
 
 
 
