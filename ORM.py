@@ -197,3 +197,12 @@ Session = sessionmaker(bind = engine)
 # session.add(c23)
 # print(c23.value_id)
 # session.commit()
+
+def create_customer_and_basket(username, f_name, l_name, gender, email, address, password, phone_num, basket_id):
+    c1 = Customer(username = username, c_f_name = f_name, c_l_name = l_name, gender = gender, email = email,
+                  address = address, pass_word = password, phone = phone_num)
+                  
+    b1 = Basket(basket_id = basket_id, totalprice = 0, product_id = 0, price = 0, customer_id = username)
+
+
+
