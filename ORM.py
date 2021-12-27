@@ -1,7 +1,7 @@
 import os
 from sqlalchemy import create_engine, Integer, String, ForeignKey, Column
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship,sessionmaker, Session
+from sqlalchemy.orm import relationship, session,sessionmaker, Session
 from sqlalchemy.sql.expression import true
 from sqlalchemy.sql.sqltypes import BigInteger
 
@@ -80,7 +80,7 @@ class Comment(Base):
 class Star(Base):
     __tablename__ = 'star'  
     comment_id   = Column(Integer, primary_key=true)
-    category_name  = Column(String)
+    star_num  = Column(Integer)
     customer_id = Column(String,ForeignKey(Customer.username))
     product_id = Column(Integer,ForeignKey(Product.product_id))
     star_product = relationship("Product", back_populates="product_star")
@@ -199,10 +199,54 @@ Session = sessionmaker(bind = engine)
 # session.commit()
 
 def create_customer_and_basket(username, f_name, l_name, gender, email, address, password, phone_num, basket_id):
-    c1 = Customer(username = username, c_f_name = f_name, c_l_name = l_name, gender = gender, email = email,
-                  address = address, pass_word = password, phone = phone_num)
-                  
-    b1 = Basket(basket_id = basket_id, totalprice = 0, product_id = 0, price = 0, customer_id = username)
+    customer = Customer()
+    customer.username = username
+    customer.c_f_name = f_name
+    customer.c_l_name = l_name
+    customer.gender = gender
+    customer.email = email,
+    customer.address = address
+    customer.pass_word = password
+    customer.phone = phone_num
+
+
+    basket = Basket()
+    basket.basket_id = basket_id
+    basket.totalprice = 0
+    basket.product_id = 0
+    basket.price = 0
+    basket.customer_id = username
+
+    Session.add(customer)
+    Session.add(basket)
+
+    Session.commit()
+    
+
+
+def create_comment_and_star(comment_id, comment_text, star_num, customer_id, product_id):
+
+    comment = Comment()
+    comment.comment_id = comment_id
+    comment.customer_id = customer_id
+    comment.comment_text = comment_text
+    comment.product_id = product_id
+
+
+    star = Star()
+    star.comment_id = comment_id
+    star.customer_id = customer_id
+    star.star_num = star_num
+    star.product_id = product_id
+
+    Session.add(comment)
+    Session.add(star)
+
+    Session.commit()
+
+
+
+
 
 
 
