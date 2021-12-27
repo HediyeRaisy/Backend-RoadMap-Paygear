@@ -126,6 +126,7 @@ class Post(Base):
     sent_p = Column(String)
     totalpay = Column(Integer)
     region_id = Column(Integer)
+    customer_id = Column(String)
     address = Column(String)
     phone = Column (String)
 
@@ -146,7 +147,7 @@ class Post(Base):
 # session.commit()
 # print(c1.basket_id)
 
-class seller(Base):
+class Seller(Base):
     
     __tablename__ = 'seller'
 
@@ -155,7 +156,7 @@ class seller(Base):
     name = Column(String)
  
 
-class product_sellers(Base):
+class Product_sellers(Base):
     
     __tablename__ = 'product_sellers'
 
@@ -163,10 +164,10 @@ class product_sellers(Base):
     p_number = Column(Integer,primary_key=True)
     p_id = Column(Integer,ForeignKey(Product.product_id)) #one to one relationship
     price = Column(Integer)
-    seller_id = Column(Integer,ForeignKey(seller.seller_id))
+    seller_id = Column(Integer,ForeignKey(Seller.seller_id))
 
 
-class attribute(Base):
+class Attribute(Base):
     
     __tablename__ = 'attribute'
 
@@ -175,7 +176,7 @@ class attribute(Base):
     category_id = Column(Integer,ForeignKey(Category.category_id))
     attribute = Column(String)
 
-class value(Base):
+class Value(Base):
     
     __tablename__ = 'value'
 
@@ -278,6 +279,52 @@ def select_star_comment(comment_id):
         .first()
  
     return star_comment
+
+def create_pay(basket_id,date_p,pay_id):
+    pay = Pay()
+    pay.pay_id = pay_id
+    pay.data_p = date_p
+    basket = session.query(Basket).get(basket_id)
+    pay.totalpay = basket.totalprice
+    pay.basket_id = basket_id
+
+def create_order(order_id,pay_id,date,region_id,customer_id):
+    order = Order()
+    order.order_id = order_id
+    order.pay_id = pay_id
+    pay = session.query(Pay).get(pay_id)
+    order.basket_id = pay.basket_id
+    order.customer_id = customer_id
+    order.date_order = date
+    order.region_id = region_id
+    order.totalpay= pay.totalpay
+
+def create_post(post_id,order_id,date,sent,customer_id):
+
+    post = Post()
+    post.post_id = post_id
+    post.order_id = order_id
+    post.date_p = date
+    post.sent_p = sent
+    post.customer_id = customer_id
+    customer = session.query(Customer).get(customer_id)
+    post.phone = customer.phone
+    post.address = customer.address
+    order = session.query(Order).get(order_id)
+    post.region_id = order.region_id
+    post.totalpay = order.totalpay
+
+def create_seller(seller_id,name):
+    seller = Seller()
+    seller.name = name
+    seller.seller_id = seller_id
+
+def create_product_seller(p_id,price,p_number,seller_id):
+    ps = Product_sellers()
+    ps.p_id = p_id
+    ps.p_number = p_number
+    ps.price = price
+    ps.seller_id = seller_id
 
 
 
